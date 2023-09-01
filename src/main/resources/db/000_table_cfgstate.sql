@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS ${database}.${prefix}cfgstate (
+  cfg_key VARCHAR(255) NOT NULL,
+  cfg_val VARCHAR(255) NOT NULL,
+  last_update TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP
+    NOT NULL,
+  PRIMARY KEY (cfg_key)
+)Engine=InnoDB;

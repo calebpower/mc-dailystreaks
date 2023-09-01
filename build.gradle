@@ -1,0 +1,46 @@
+plugins {
+  id "com.github.johnrengelman.shadow" version "8.1.1"
+}
+
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+repositories {
+  jcenter()
+  maven { url "https://jitpack.io" }
+  maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+  maven { url "https://repo.xenondevs.xyz/releases" }
+}
+
+group = prjGroup
+version = prjVer
+sourceCompatibility = prjCompat
+targetCompatibility = prjCompat
+
+dependencies {
+  implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+  implementation 'mysql:mysql-connector-java:8.0.31'
+  implementation 'org.json:json:20230227'
+  implementation 'xyz.xenondevs.invui:invui:1.14'
+  compileOnly 'com.github.calebpower:mcdb:0.0.3'
+  compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
+}
+
+eclipse {
+  classpath {
+    downloadJavadoc = true
+    downloadSources = true
+  }
+}
+
+shadowJar {
+  archiveBaseName.set(prjName)
+  archiveClassifier.set('')
+  archiveVersion.set('')
+}
+
+artifacts {
+  archives shadowJar
+}
