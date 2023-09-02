@@ -7,11 +7,6 @@ import com.calebpower.mc.dailystreaks.DailyStreaks;
 
 import org.bukkit.command.CommandSender;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
-
 /**
  * Subcommand designed to help out a little.
  * 
@@ -33,11 +28,7 @@ public class HelpSubcommand extends Subcommand {
   }
 
   @Override public void onCommand(CommandSender sender, TokenList args) throws SubcommandException {
-    sender.spigot().sendMessage(
-        new TextComponent(
-            ChatColor.translateAlternateColorCodes(
-                '&',
-                "&d[&fDailyStreak&d] &7Usage:")));
+    getPlugin().message(sender, "Usage:");
     
     for(var sc : getPlugin().getSubcommands()) {
       // don't display usage to a player that doesn't have the authority to execute it
@@ -49,21 +40,11 @@ public class HelpSubcommand extends Subcommand {
         sb.append(" ").append(c);
       
       // send it off to the player and add some interactive components
-      TextComponent usage = new TextComponent(
-          ChatColor.translateAlternateColorCodes(
-              '&',
-              String.format(
-                  "&d[&fDailyStreak&d] &7%1$s%2$s",
-                  sb.toString(),
-                  sc.getArgUsage())));
-      usage.setHoverEvent(
-          new HoverEvent(
-              HoverEvent.Action.SHOW_TEXT,
-              new Text(
-                  ChatColor.translateAlternateColorCodes(
-                      '&',
-                      "&r&b" + sc.getDescription()))));
-      sender.spigot().sendMessage(usage);
+      getPlugin().message(
+          sender,
+          sb.toString() + sc.getArgUsage(),
+          null,
+          sc.getDescription());
     }
   }
   

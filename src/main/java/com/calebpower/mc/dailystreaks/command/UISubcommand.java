@@ -6,9 +6,6 @@ import com.calebpower.mc.dailystreaks.shop.ShopUI;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
-
 public class UISubcommand extends Subcommand {
   
   public UISubcommand(DailyStreaks plugin) {
@@ -30,15 +27,13 @@ public class UISubcommand extends Subcommand {
       ui.open();
     } catch(Exception e) {
       e.printStackTrace();
-      sender.spigot().sendMessage(
-          new TextComponent(
-              ChatColor.translateAlternateColorCodes(
-                  '&',
-                  String.format(
-                      "&d[&7DailyStreak&d] &cAn exception was thrown: %1$s",
-                      null == e.getMessage()
-                          ? "check the console for more info"
-                          : e.getMessage()))));
+      getPlugin().message(
+          sender,
+          "&cAn exception was thrown: %1$s",
+          null,
+          null == e.getMessage()
+              ? "check the console for more info"
+              : e.getMessage());
     }
   }
   

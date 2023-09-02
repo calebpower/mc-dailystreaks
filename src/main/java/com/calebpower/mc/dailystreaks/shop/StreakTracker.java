@@ -14,19 +14,7 @@ import com.calebpower.mc.dailystreaks.DailyStreaks;
 import com.calebpower.mc.dailystreaks.db.Database;
 import com.calebpower.mc.dailystreaks.model.Denizen;
 
-import org.bukkit.Material;
-import org.json.JSONObject;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class StreakTracker implements Runnable {
-
-  private final MediaType JSON = MediaType.get("application/json; charset=utf-8");
-  private final OkHttpClient http = new OkHttpClient();
 
   private AtomicBoolean maintenanceMode = new AtomicBoolean(false);
   private DailyStreaks plugin = null;
@@ -99,7 +87,7 @@ public class StreakTracker implements Runnable {
           }
 
           for(var sb : outgoingMessages)
-            plugin.publishMessage(sb.toString());
+            plugin.broadcast(sb.toString());
           
         } catch(IOException | SQLException e) {
           e.printStackTrace();

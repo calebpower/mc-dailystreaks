@@ -51,11 +51,7 @@ public class IncompleteQuestItem extends AbstractItem {
     }
 
     if(count < quantity) { // player did not have enough of whatever
-      player.spigot().sendMessage(
-          new TextComponent(
-              ChatColor.translateAlternateColorCodes(
-                  '&',
-                  "&d[&7DailyStreak&d] &cYou don't have enough of that item.")));
+      plugin.message(player, "&cYou don't have enough of that item.");
                       
     } else {
       count = quantity;
@@ -88,14 +84,12 @@ public class IncompleteQuestItem extends AbstractItem {
 
         long remaining = denizen.getQuestSlots().entrySet().stream().filter(s -> !s.getValue()).count();
         if(0 == remaining) {
-          player.spigot().sendMessage(
-              new TextComponent(
-                  ChatColor.translateAlternateColorCodes(
-                      '&',
-                      String.format(
-                          "&d[&7DailyStreak&d] &aFantastic! Your streak count has increased to %1$d!",
-                          denizen.getStreak() + 1))));
-          plugin.publishMessage(
+          plugin.message(
+              player,
+              "&aFantastic! Your streak count has increased to %1$s!",
+              null,
+              denizen.getStreak() + 1);
+          plugin.broadcast(
               String.format(
                   "%1$s's streak has increased to %2$d!",
                   player.getName(),
