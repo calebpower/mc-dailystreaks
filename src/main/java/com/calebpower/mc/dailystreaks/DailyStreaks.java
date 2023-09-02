@@ -4,25 +4,33 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
+import com.calebpower.mc.dailystreaks.command.BroadcastSubcommand;
 import com.calebpower.mc.dailystreaks.command.ConfigSubcommand;
 import com.calebpower.mc.dailystreaks.command.HelpSubcommand;
 import com.calebpower.mc.dailystreaks.command.RefreshSubcommand;
 import com.calebpower.mc.dailystreaks.command.Subcommand;
+import com.calebpower.mc.dailystreaks.command.TokenList;
 import com.calebpower.mc.dailystreaks.command.UISubcommand;
+import com.calebpower.mc.dailystreaks.command.Subcommand.SubcommandException;
 import com.calebpower.mc.dailystreaks.db.Database;
 import com.calebpower.mc.dailystreaks.model.ValidMaterial;
 import com.calebpower.mc.dailystreaks.shop.StreakTracker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONObject;
@@ -100,6 +108,7 @@ public class DailyStreaks extends JavaPlugin {
     }
 
     // instantiate subcommands
+    commands.add(new BroadcastSubcommand(this));
     commands.add(new ConfigSubcommand(this));
     commands.add(new HelpSubcommand(this));
     commands.add(new RefreshSubcommand(this));
@@ -112,6 +121,58 @@ public class DailyStreaks extends JavaPlugin {
     db = null;
     http = null;
     getLogger().log(Level.INFO, "So long, and thanks for all the fish!");
+  }
+
+  @Override public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
+    Subcommand command = null;
+    
+    List<Entry<Subcommand, String[]>> subcommands = new ArrayList<>();
+    for(Subcommand sc : this.commands) {
+      for(var cmdarr : sc.getSubcommands())
+        if(args.length >= cmdarr.length) {
+          subcommands.add(
+              new SimpleEntry<>(sc, cmdarr));
+        }
+    }
+    
+    for(int i = 0; i < args.length; i++) {
+      for(int j = subcommands.size() - 1; j >= 0; j--) {
+        String[] cmdarr = subcommands.get(j).getValue();
+        if(cmdarr.length > i && !cmdarr[i].equalsIgnoreCase(args[i]))
+          subcommands.remove(j);
+      }
+    }
+    
+    int argCount = -1;
+    for(var sc : subcommands)
+      if(sc.getValue().length > argCount) {
+        argCount = sc.getValue().length;
+        command = sc.getKey();
+      }
+    
+    boolean success = false; // assume the worst
+    
+    if(null != command) {
+      if(!command.hasPermission(sender)) { // tell viper off for trying to execute commands he doesn't need
+        message(sender, "&cYou don't appear to have permission to use this command.");
+      } else {
+        try {
+          command.onCommand( // fire the subcommand
+              sender,
+              new TokenList(args, argCount));
+          success = true; // assume the subcommand worked because it should have thrown an exception otherwise
+        } catch(SubcommandException e) { // gg no re
+          if(null != e.getMessage())
+            message(sender, e.getMessage());
+          success = !e.doDisplayHelp();
+        }
+      }
+    }
+    
+    if(!success) // the player is dumb so remind them how commands work
+      message(sender, "&7If you need some help, please execute &d/streak help&7.");
+    
+    return true;
   }
 
   public String getConfig(String key) {
