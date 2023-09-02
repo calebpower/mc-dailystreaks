@@ -86,40 +86,6 @@ public class Database {
     }
   }
 
-  public List<Denizen> getDenizensWithStreaks(int limit, int offset, Timestamp endTimestamp) throws SQLException {
-    Connection con = dbAPI.connect(dbHandle);
-    SQLBuilder queryBuilder = new SQLBuilder().select(
-        dbPrefix + "denizen",
-        "id",
-        "ign",
-        "quests",
-        "streak",
-        "last_update");
-    if(null != endTimestamp)
-      queryBuilder.where("last_update");
-    queryBuilder.limit(limit, offset);
-    
-    PreparedStatement stmt = con.prepareStatement(queryBuilder.toString());
-    if(null != endTimestamp)
-      stmt.setTimestamp(1, endTimestamp);
-    
-    ResultSet res = stmt.executeQuery();
-
-    List<Denizen> denizens = new ArrayList<>();
-    while(res.next())
-      denizens.add(
-          new Denizen(
-              SQLBuilder.bytesToUUID(
-                  res.getBytes("id")),
-              res.getString("ign"),
-              res.getInt("streak"),
-              res.getByte("quests"),
-              res.getTimestamp("last_update")));
-
-    close(con, stmt, res);
-    return denizens;
-  }
-
   public Set<Denizen> getDenizensWithCompletedQuests(Timestamp lowerBound) throws SQLException { // get denizens, with and without a streak, that completed all quests today
     Connection con = dbAPI.connect(dbHandle);
     PreparedStatement stmt = con.prepareStatement(
@@ -235,7 +201,7 @@ public class Database {
     stmt.setInt(3, denizen.getStreak());
     stmt.setBytes(4, SQLBuilder.uuidToBytes(denizen.getID()));
 
-    if(0 <= stmt.executeUpdate()) {
+    if(0 >= stmt.executeUpdate()) {
       close(null, stmt, null);
       stmt = con.prepareStatement(
           new SQLBuilder().insert(

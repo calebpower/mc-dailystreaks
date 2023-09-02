@@ -42,9 +42,10 @@ public class HelpSubcommand extends Subcommand {
       // send it off to the player and add some interactive components
       getPlugin().message(
           sender,
-          sb.toString() + sc.getArgUsage(),
-          null,
-          sc.getDescription());
+          "%1$s %2$s",
+          sc.getDescription(),
+          sb.toString(),
+          sc.getArgUsage());
     }
   }
   

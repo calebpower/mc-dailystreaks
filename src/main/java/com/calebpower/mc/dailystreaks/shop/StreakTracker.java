@@ -11,14 +11,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.calebpower.mc.dailystreaks.DailyStreaks;
-import com.calebpower.mc.dailystreaks.db.Database;
 import com.calebpower.mc.dailystreaks.model.Denizen;
 
 public class StreakTracker implements Runnable {
 
   private AtomicBoolean maintenanceMode = new AtomicBoolean(false);
   private DailyStreaks plugin = null;
-  private Database db = null;
   private Thread thread = null;
 
   public StreakTracker(DailyStreaks plugin) {
@@ -42,10 +40,13 @@ public class StreakTracker implements Runnable {
     try {
       while(!thread.isInterrupted()) {
         Calendar cal = Calendar.getInstance();
+        /*
         cal.add(Calendar.DAY_OF_MONTH, 1);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.MILLISECOND, 0);
+        */
+        cal.add(Calendar.MINUTE, 3); // XXX this is for testing only
         long delta = cal.getTimeInMillis() - System.currentTimeMillis();
 
         Thread.sleep(delta);
@@ -55,18 +56,20 @@ public class StreakTracker implements Runnable {
         List<StringBuilder> outgoingMessages = new ArrayList<>();
 
         try {
-          Set<Denizen> denizensWithCompletedQuests = db.getDenizensWithCompletedQuests(new Timestamp(cal.getTimeInMillis()));
-          Set<Denizen> denizensWithIncompleteQuests = db.getDenizensWithIncompleteQuests();
+          Set<Denizen> denizensWithCompletedQuests = plugin.getDB().getDenizensWithCompletedQuests(new Timestamp(cal.getTimeInMillis()));
+          Set<Denizen> denizensWithIncompleteQuests = plugin.getDB().getDenizensWithIncompleteQuests();
 
           StringBuilder currentSB = null;
 
-          if(!denizensWithIncompleteQuests.isEmpty()) {
+          if(denizensWithIncompleteQuests.isEmpty()) {
+            outgoingMessages.add(new StringBuilder("Fantastic! Nobody's lost their streak today! ^^"));
+          } else if(!denizensWithIncompleteQuests.isEmpty()) {
             outgoingMessages.add(currentSB = new StringBuilder("**Lost Streaks:**\n\n"));
             for(var denizen : denizensWithIncompleteQuests) {
               int oldStreak = denizen.getStreak();
               denizen.rstStreak();
               denizen.rstSlots();
-              db.setDenizen(denizen);
+              plugin.getDB().setDenizen(denizen);
               String bullet = String.format(
                   "- %1$s (from %2$d)\n",
                   denizen.getIGN(),
@@ -83,7 +86,7 @@ public class StreakTracker implements Runnable {
           for(var denizen : denizensWithCompletedQuests) {
             denizen.incStreak();
             denizen.rstSlots();
-            db.setDenizen(denizen);
+            plugin.getDB().setDenizen(denizen);
           }
 
           for(var sb : outgoingMessages)

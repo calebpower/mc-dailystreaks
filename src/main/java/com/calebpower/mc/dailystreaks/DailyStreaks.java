@@ -66,7 +66,7 @@ public class DailyStreaks extends JavaPlugin {
       db.load();
 
       String prefix = db.getConfig("msg_prefix");
-      config.put("msg_prefix", null == prefix ? "&d[&7DailyStreak&d] &c" : prefix);
+      config.put("msg_prefix", null == prefix ? "&d[&7DailyStreaks&d] &f" : prefix);
       config.put("discord_webhook", db.getConfig("discord_webhook"));
       config.put("bc_command", db.getConfig("bc_command"));
       
@@ -170,7 +170,7 @@ public class DailyStreaks extends JavaPlugin {
     }
     
     if(!success) // the player is dumb so remind them how commands work
-      message(sender, "&7If you need some help, please execute &d/streak help&7.");
+      message(sender, "&7If you need some help, just run &d/streak help&7.");
     
     return true;
   }

@@ -24,7 +24,7 @@ dependencies {
   implementation 'mysql:mysql-connector-java:8.0.31'
   implementation 'org.json:json:20230227'
   implementation 'xyz.xenondevs.invui:invui:1.14'
-  compileOnly 'com.github.calebpower:mcdb:0.0.3'
+  compileOnly 'com.github.calebpower:mcdb:0.0.4'
   compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
 }
 

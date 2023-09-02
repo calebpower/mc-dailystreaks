@@ -11,7 +11,7 @@ public class RefreshSubcommand extends Subcommand {
         plugin,
         "resets the current set of shop items",
         CommandPermission.PLUGIN_ADMINISTRATOR,
-        new String[] { "reset" });
+        new String[][] {{ "refresh" }, { "reset" }});
   }
   
   @Override public void onCommand(CommandSender sender, TokenList args) throws SubcommandException {

@@ -19,12 +19,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
+import xyz.xenondevs.invui.window.Window;
 
 public class IncompleteQuestItem extends AbstractItem {
 
   private DailyStreaks plugin = null;
   private Material material = null;
   private QuestSlot slot = null;
+  private Window window = null;
   private int quantity = 0;
 
   public IncompleteQuestItem(DailyStreaks plugin, Material material, int quantity, QuestSlot slot) {
@@ -40,6 +42,8 @@ public class IncompleteQuestItem extends AbstractItem {
   }
   
   @Override public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
+    window.close();
+    
     var inv = player.getInventory();
     var contents = inv.getContents();
 
@@ -70,15 +74,6 @@ public class IncompleteQuestItem extends AbstractItem {
 
       try {
         Denizen denizen = plugin.getDB().getDenizen(player.getUniqueId());
-        if(null == denizen) {
-          denizen = new Denizen(
-              player.getUniqueId(),
-              player.getName(),
-              0,
-              (byte)0x0,
-              null);
-        } else denizen.setIGN(player.getName());
-
         denizen.setUsed(slot);
         plugin.getDB().setDenizen(denizen);
 
@@ -100,7 +95,7 @@ public class IncompleteQuestItem extends AbstractItem {
                   ChatColor.translateAlternateColorCodes(
                       '&',
                       String.format(
-                          "&d[&7DailyStreak&d] &aGreat! You only have %1$d more quest%2$s left to go today!",
+                          "&d[&7DailyStreak&d] &aGreat! You only have %1$d more quest%2$s left to do today!",
                           remaining,
                           1 == remaining ? "" : "s"))));
         }
@@ -121,9 +116,14 @@ public class IncompleteQuestItem extends AbstractItem {
   }
 
   private boolean isValidItem(ItemStack stack) {
-    return stack.getType() == material
+    return null != stack
+      && stack.getType() == material
       && !stack.getItemMeta().hasEnchants()
       && !stack.getItemMeta().hasDisplayName();
+  }
+
+  public void setWindow(Window window) {
+    this.window = window;
   }
   
 }

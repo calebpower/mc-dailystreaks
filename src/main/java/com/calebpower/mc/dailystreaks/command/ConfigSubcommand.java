@@ -16,9 +16,9 @@ public class ConfigSubcommand extends Subcommand {
         plugin,
         "views or sets the webhook URL",
         CommandPermission.PLUGIN_ADMINISTRATOR,
-        new String[] { "webhook" },
+        new String[] { "config" },
         "<key> [value]");
-    keys.put("prefix", "bc_command");
+    keys.put("broadcast", "bc_command");
     keys.put("prefix", "msg_prefix");
     keys.put("webhook", "discord_webhook");
   }
