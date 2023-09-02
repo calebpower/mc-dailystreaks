@@ -81,7 +81,7 @@ public class IncompleteQuestItem extends AbstractItem {
         if(0 == remaining) {
           plugin.message(
               player,
-              "&aFantastic! Your streak count has increased to %1$s!",
+              "&aFantastic! Your streak count is up to %1$s!",
               null,
               denizen.getStreak() + 1);
           plugin.broadcast(
@@ -95,7 +95,7 @@ public class IncompleteQuestItem extends AbstractItem {
                   ChatColor.translateAlternateColorCodes(
                       '&',
                       String.format(
-                          "&d[&7DailyStreak&d] &aGreat! You only have %1$d more quest%2$s left to do today!",
+                          "&d[&7DailyStreak&d] &aGreat! You've got %1$d more quest%2$s to do today!",
                           remaining,
                           1 == remaining ? "" : "s"))));
         }

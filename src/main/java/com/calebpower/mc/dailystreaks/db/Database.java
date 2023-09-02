@@ -86,7 +86,7 @@ public class Database {
     }
   }
 
-  public Set<Denizen> getDenizensWithCompletedQuests(Timestamp lowerBound) throws SQLException { // get denizens, with and without a streak, that completed all quests today
+  public Set<Denizen> getDenizensWithCompletedQuests() throws SQLException { // get denizens, with and without a streak, that completed all quests
     Connection con = dbAPI.connect(dbHandle);
     PreparedStatement stmt = con.prepareStatement(
         new SQLBuilder().select(
@@ -99,12 +99,8 @@ public class Database {
         .where(
             "quests",
             Comparison.GREATER_THAN_OR_EQUAL_TO)
-        .where(
-            "last_update",
-            Comparison.GREATER_THAN_OR_EQUAL_TO)
         .toString());
     stmt.setByte(1, (byte)0x7);
-    stmt.setTimestamp(2, lowerBound);
     ResultSet res = stmt.executeQuery();
 
     Set<Denizen> denizens = new HashSet<>();

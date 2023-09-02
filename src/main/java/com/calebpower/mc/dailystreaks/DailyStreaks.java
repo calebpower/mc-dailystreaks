@@ -205,7 +205,7 @@ public class DailyStreaks extends JavaPlugin {
             .valueOf(
                 ValidMaterial.values()[
                     SecureRandom.getInstanceStrong().nextInt(
-                        ValidMaterial.values().length - 1) + 1]
+                        ValidMaterial.values().length)]
                 .name());
       } while(currentMaterials.keySet().contains(material));
 
@@ -268,7 +268,9 @@ public class DailyStreaks extends JavaPlugin {
           .post(body)
           .build();
       
-      try(Response res = http.newCall(req).execute()) { }
+      try(Response res = http.newCall(req).execute()) {
+        res.close();
+      }
     }
   }
   
