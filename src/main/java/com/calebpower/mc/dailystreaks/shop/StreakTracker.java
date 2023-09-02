@@ -54,13 +54,10 @@ public class StreakTracker implements Runnable {
       while(!thread.isInterrupted()) {
         
         Calendar cal = Calendar.getInstance();
-        /*
         cal.add(Calendar.DAY_OF_MONTH, 1);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        */
-        cal.add(Calendar.MINUTE, 2); // XXX this is for testing only
         long delta = cal.getTimeInMillis() - System.currentTimeMillis();
 
         if(!runNow) Thread.sleep(delta);

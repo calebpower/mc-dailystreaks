@@ -23,6 +23,7 @@ public class ConfigSubcommand extends Subcommand {
     keys.put("checkpoint", "reward_period");
     keys.put("prefix", "msg_prefix");
     keys.put("reward", "reward_command");
+    keys.put("prize", "little_prize");
     keys.put("webhook", "discord_webhook");
   }
   

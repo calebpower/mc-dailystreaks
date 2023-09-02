@@ -88,12 +88,19 @@ public class IncompleteQuestItem extends AbstractItem {
             checkpoint = Integer.parseInt(
                 plugin.getConfig("reward_period"));
           } catch(NumberFormatException e) { }
+
+          String prize = plugin.getConfig("little_prize");
           
           plugin.message(
               player,
               "&aFantastic! Your streak count is up to %1$s!",
               null,
               streak);
+
+          if(null != prize)
+            Bukkit.getServer().dispatchCommand(
+                Bukkit.getConsoleSender(),
+                prize.replace("[[PLAYER]]", player.getName()));
 
           if(null != reward && 0 < checkpoint && 0 == streak % checkpoint)
             Bukkit.getServer().dispatchCommand(

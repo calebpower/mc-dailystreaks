@@ -71,6 +71,7 @@ public class DailyStreaks extends JavaPlugin {
       config.put("bc_command", db.getConfig("bc_command"));
       config.put("reward_period", db.getConfig("reward_period"));
       config.put("reward_command", db.getConfig("reward_command"));
+      config.put("little_prize", db.getConfig("little_prize"));
       
       String[] matNames = new String[3];
       int[] matQuantities = new int[3];
@@ -241,7 +242,7 @@ public class DailyStreaks extends JavaPlugin {
             '&',
             config.get("msg_prefix") + String.format(message, args)));
 
-    if(null == hover)
+    if(null != hover)
       component.setHoverEvent(
           new HoverEvent(
               HoverEvent.Action.SHOW_TEXT,
