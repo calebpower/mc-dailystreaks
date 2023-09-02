@@ -69,6 +69,8 @@ public class DailyStreaks extends JavaPlugin {
       config.put("msg_prefix", null == prefix ? "&d[&7DailyStreaks&d] &f" : prefix);
       config.put("discord_webhook", db.getConfig("discord_webhook"));
       config.put("bc_command", db.getConfig("bc_command"));
+      config.put("reward_period", db.getConfig("reward_period"));
+      config.put("reward_command", db.getConfig("reward_command"));
       
       String[] matNames = new String[3];
       int[] matQuantities = new int[3];
@@ -212,7 +214,8 @@ public class DailyStreaks extends JavaPlugin {
       currentMaterials.put(
           material,
           SecureRandom.getInstanceStrong().nextInt(
-              material.getMaxStackSize()));
+              1,
+              material.getMaxStackSize() + 1));
 
       db.setConfig(
           String.format("item_%1$d_mat", i),

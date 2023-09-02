@@ -3,12 +3,10 @@ package com.calebpower.mc.dailystreaks.shop;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.calebpower.mc.dailystreaks.DailyStreaks;
 import com.calebpower.mc.dailystreaks.model.Denizen;
@@ -66,45 +64,52 @@ public class StreakTracker implements Runnable {
         long delta = cal.getTimeInMillis() - System.currentTimeMillis();
 
         if(!runNow) Thread.sleep(delta);
+        else runNow = false;
         
-        List<StringBuilder> outgoingMessages = new ArrayList<>();
-
         try {
-          Set<Denizen> denizensWithCompletedQuests = plugin.getDB().getDenizensWithCompletedQuests();
-          Set<Denizen> denizensWithIncompleteQuests = plugin.getDB().getDenizensWithIncompleteQuests();
+          Set<Denizen> goodDenizens = plugin.getDB().getDenizensWithCompletedQuests();
+          Set<Denizen> badDenizens = plugin.getDB().getDenizensWithIncompleteQuests();
 
-          StringBuilder currentSB = null;
-
-          if(denizensWithIncompleteQuests.isEmpty()) {
-            outgoingMessages.add(new StringBuilder("Fantastic! Nobody's lost their streak today! ^^"));
-          } else if(!denizensWithIncompleteQuests.isEmpty()) {
+          if(badDenizens.isEmpty()) {
+            plugin.broadcast("Fantastic! Nobody's lost their streak today! ^^");
+            
+          } else if(!badDenizens.isEmpty()) {
+            List<StringBuilder> outgoingMessages = new ArrayList<>();
+            StringBuilder currentSB = null;
+            boolean shameBadDenizens = false;
+          
             outgoingMessages.add(currentSB = new StringBuilder("**Lost Streaks:**\n"));
-            for(var denizen : denizensWithIncompleteQuests) {
+            for(var denizen : badDenizens) {
               int oldStreak = denizen.getStreak();
               denizen.rstStreak();
               denizen.rstSlots();
               plugin.getDB().setDenizen(denizen);
-              String bullet = String.format(
-                  "- %1$s (from %2$d)\n",
-                  denizen.getIGN(),
-                  oldStreak);
-              if(2000 < currentSB.length() + bullet.length()) {
-                currentSB.deleteCharAt(currentSB.length() - 1);
-                outgoingMessages.add(currentSB = new StringBuilder(bullet));
-              } else currentSB.append(bullet);
+
+              if(0 < oldStreak) {
+                shameBadDenizens = true;
+                String bullet = String.format(
+                    "- %1$s (from %2$d)\n",
+                    denizen.getIGN(),
+                    oldStreak);
+                if(2000 < currentSB.length() + bullet.length()) {
+                  currentSB.deleteCharAt(currentSB.length() - 1);
+                  outgoingMessages.add(currentSB = new StringBuilder(bullet));
+                } else currentSB.append(bullet);
+              }
             }
-            
-            currentSB.deleteCharAt(currentSB.length() - 1);
+
+            if(shameBadDenizens) {
+              currentSB.deleteCharAt(currentSB.length() - 1);
+              for(var sb : outgoingMessages)
+                plugin.broadcast(sb.toString());
+            }
           }
 
-          for(var denizen : denizensWithCompletedQuests) {
+          for(var denizen : goodDenizens) {
             denizen.incStreak();
             denizen.rstSlots();
             plugin.getDB().setDenizen(denizen);
           }
-
-          for(var sb : outgoingMessages)
-            plugin.broadcast(sb.toString());
 
           plugin.refreshMaterials();
           plugin.getDB().setConfig("last_cycle", Long.toString(System.currentTimeMillis()));

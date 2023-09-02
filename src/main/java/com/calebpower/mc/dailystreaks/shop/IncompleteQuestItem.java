@@ -7,6 +7,7 @@ import com.calebpower.mc.dailystreaks.DailyStreaks;
 import com.calebpower.mc.dailystreaks.model.Denizen;
 import com.calebpower.mc.dailystreaks.model.QuestSlot;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -79,16 +80,32 @@ public class IncompleteQuestItem extends AbstractItem {
 
         long remaining = denizen.getQuestSlots().entrySet().stream().filter(s -> !s.getValue()).count();
         if(0 == remaining) {
+          int streak = denizen.getStreak() + 1;
+
+          String reward = plugin.getConfig("reward_cmd");
+          int checkpoint = 0;
+          try {
+            checkpoint = Integer.parseInt(
+                plugin.getConfig("reward_period"));
+          } catch(NumberFormatException e) { }
+          
           plugin.message(
               player,
               "&aFantastic! Your streak count is up to %1$s!",
               null,
-              denizen.getStreak() + 1);
+              streak);
+
+          if(null != reward && 0 < checkpoint && 0 == streak % checkpoint)
+            Bukkit.getServer().dispatchCommand(
+                Bukkit.getConsoleSender(),
+                reward.replace("[[PLAYER]]", player.getName()));
+          
           plugin.broadcast(
               String.format(
                   "%1$s's streak has increased to %2$d!",
                   player.getName(),
-                  denizen.getStreak() + 1));
+                  streak));
+          
         } else {
           player.spigot().sendMessage(
               new TextComponent(

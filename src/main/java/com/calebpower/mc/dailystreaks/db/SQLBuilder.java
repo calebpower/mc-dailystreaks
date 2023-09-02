@@ -596,6 +596,7 @@ public class SQLBuilder {
     String query = build();
     if(null == query)
       throw new IllegalStateException("Failed to generate statement.");
+    System.err.println(query);
     return query;
   }
   

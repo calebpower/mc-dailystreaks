@@ -1,5 +1,7 @@
 package com.calebpower.mc.dailystreaks.command;
 
+import java.sql.SQLException;
+
 import com.calebpower.mc.dailystreaks.DailyStreaks;
 import com.calebpower.mc.dailystreaks.shop.ShopUI;
 
@@ -25,7 +27,7 @@ public class UISubcommand extends Subcommand {
     
     try {
       ui.open();
-    } catch(Exception e) {
+    } catch(SQLException e) {
       e.printStackTrace();
       getPlugin().message(
           sender,

@@ -1,5 +1,6 @@
 package com.calebpower.mc.dailystreaks.command;
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -19,7 +20,9 @@ public class ConfigSubcommand extends Subcommand {
         new String[] { "config" },
         "<key> [value]");
     keys.put("broadcast", "bc_command");
+    keys.put("checkpoint", "reward_period");
     keys.put("prefix", "msg_prefix");
+    keys.put("reward", "reward_command");
     keys.put("webhook", "discord_webhook");
   }
   
@@ -60,7 +63,7 @@ public class ConfigSubcommand extends Subcommand {
         
       } else throw new SubcommandException(true);
       
-    } catch(Exception e) {
+    } catch(SQLException e) {
       e.printStackTrace();
       getPlugin().message(
           sender,

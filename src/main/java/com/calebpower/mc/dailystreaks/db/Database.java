@@ -10,10 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -86,7 +83,8 @@ public class Database {
     }
   }
 
-  public Set<Denizen> getDenizensWithCompletedQuests() throws SQLException { // get denizens, with and without a streak, that completed all quests
+  // get denizens, both with and without an existing streak, that completed all quests
+  public Set<Denizen> getDenizensWithCompletedQuests() throws SQLException {
     Connection con = dbAPI.connect(dbHandle);
     PreparedStatement stmt = con.prepareStatement(
         new SQLBuilder().select(
@@ -118,7 +116,8 @@ public class Database {
     return denizens;
   }
 
-  public Set<Denizen> getDenizensWithIncompleteQuests() throws SQLException { // get denizens, only those with a streak, that didn't complete quests today
+  // get all denizens with either (a) streaks, but incomplete quests or (b) partially complete quests
+  public Set<Denizen> getDenizensWithIncompleteQuests() throws SQLException {
     Connection con = dbAPI.connect(dbHandle);
     PreparedStatement stmt = con.prepareStatement(
         new SQLBuilder().select(
@@ -129,14 +128,19 @@ public class Database {
             "streak",
             "last_update")
         .where(
-            "streak",
-            Comparison.GREATER_THAN)
-        .where(
             "quests",
             Comparison.LESS_THAN)
+        .where(
+            "quests",
+            Comparison.GREATER_THAN)
+        .or()
+        .where(
+            "streak",
+            Comparison.GREATER_THAN)
         .toString());
-    stmt.setInt(1, 0);
-    stmt.setByte(2, (byte)0x7);
+    stmt.setByte(1, (byte)0x7);
+    stmt.setByte(2, (byte)0x0);
+    stmt.setInt(3, 0);
     ResultSet res = stmt.executeQuery();
 
     Set<Denizen> denizens = new HashSet<>();

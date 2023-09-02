@@ -1,5 +1,8 @@
 package com.calebpower.mc.dailystreaks.command;
 
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
+
 import com.calebpower.mc.dailystreaks.DailyStreaks;
 
 import org.bukkit.command.CommandSender;
@@ -20,7 +23,7 @@ public class RefreshSubcommand extends Subcommand {
     try {
       getPlugin().refreshMaterials();
       getPlugin().message(sender, "&aSuccessfully refreshed materials.");
-    } catch(Exception e) {
+    } catch(NoSuchAlgorithmException | SQLException e) {
       e.printStackTrace();
       getPlugin().message(
           sender,
