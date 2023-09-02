@@ -10,6 +10,7 @@ import com.calebpower.mc.dailystreaks.model.Denizen;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import net.md_5.bungee.api.ChatColor;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
@@ -68,7 +69,8 @@ public class ShopUI implements Listener {
 
     Window window = Window.single()
       .setViewer(player)
-      .setTitle("Daily Streaks")
+      .setTitle(
+          ChatColor.translateAlternateColorCodes('&', "&dClick an Item to Trade In!"))
       .setGui(guiBldr.build())
       .build();
 
