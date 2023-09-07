@@ -35,6 +35,8 @@ public class StreakTracker implements Runnable {
 
   @Override public void run() {
     try {
+      
+      /*
       boolean runNow = false;
 
       try {
@@ -50,6 +52,7 @@ public class StreakTracker implements Runnable {
       } catch(SQLException e) {
         e.printStackTrace();
       } catch(NumberFormatException e) { }
+      */
       
       while(!thread.isInterrupted()) {
         
@@ -60,8 +63,11 @@ public class StreakTracker implements Runnable {
         cal.set(Calendar.MILLISECOND, 0);
         long delta = cal.getTimeInMillis() - System.currentTimeMillis();
 
+        /*
         if(!runNow) Thread.sleep(delta);
         else runNow = false;
+        */
+        Thread.sleep(delta);
         
         try {
           Set<Denizen> goodDenizens = plugin.getDB().getDenizensWithCompletedQuests();
@@ -73,7 +79,7 @@ public class StreakTracker implements Runnable {
           } else if(!badDenizens.isEmpty()) {
             List<StringBuilder> outgoingMessages = new ArrayList<>();
             StringBuilder currentSB = null;
-            boolean shameBadDenizens = false;
+            int badDenizenCount = 0;
           
             outgoingMessages.add(currentSB = new StringBuilder("**Lost Streaks:**\n"));
             for(var denizen : badDenizens) {
@@ -83,7 +89,7 @@ public class StreakTracker implements Runnable {
               plugin.getDB().setDenizen(denizen);
 
               if(0 < oldStreak) {
-                shameBadDenizens = true;
+                badDenizenCount++;
                 String bullet = String.format(
                     "- %1$s (from %2$d)\n",
                     denizen.getIGN(),
@@ -95,10 +101,15 @@ public class StreakTracker implements Runnable {
               }
             }
 
-            if(shameBadDenizens) {
+            if(0 < badDenizenCount) {
+              plugin.broadcastIngame(
+                  String.format(
+                      "%1$d people lost their daily streak%2$s! ;-;",
+                      badDenizenCount,
+                      1 == badDenizenCount ? "" : "s"));
               currentSB.deleteCharAt(currentSB.length() - 1);
               for(var sb : outgoingMessages)
-                plugin.broadcast(sb.toString());
+                plugin.broadcastDiscord(sb.toString());
             }
           }
 

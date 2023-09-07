@@ -107,6 +107,11 @@ public class SQLBuilder {
       this.op = op;
     }
     
+    /**
+     * Retrieves the operation string associated with this comparison.
+     * 
+     * @return a {@link String} representing the operation
+     */
     String getOp() {
       return op;
     }
@@ -322,6 +327,7 @@ public class SQLBuilder {
    * @param left the first column that is to be matched
    * @param right the right column that is to be matched
    * @param comparison the operation of comparison between left and right columns
+   * @return this SQLBuilder object
    */
   public SQLBuilder join(Join join, String table, String alias, String left, String right, Comparison comparison) {
     joins.add(
@@ -370,7 +376,7 @@ public class SQLBuilder {
   /**
    * Adds WHERE clause with specified columns to statement.
    *
-   * @param like {@code true} to use LIKE here
+   * @param comparison the {@link Comparison} to use here
    * @param columns the columns that shall act as filters
    * @return this SQLBuilder object
    */
@@ -428,7 +434,8 @@ public class SQLBuilder {
    * Adds a LIMIT clause and a follow-up OFFSET clause.
    *
    * @param limit the number of records that the result should be limited to
-   * @param limit the number of records that should be skipped
+   * @param offset the number of records that should be skipped
+   * @return this SQLBuilder object
    */
   public SQLBuilder limit(int limit, int offset) {
     this.limit = limit;

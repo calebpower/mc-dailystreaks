@@ -253,15 +253,8 @@ public class DailyStreaks extends JavaPlugin {
 
     sender.spigot().sendMessage(component);
   }
-
-  public void broadcast(String message) throws IOException, SQLException {
-    String bcCmd = db.getConfig("bc_command");
-    if(null != bcCmd) {
-      Bukkit.getServer().dispatchCommand(
-          Bukkit.getConsoleSender(),
-          bcCmd.replace("[[MSG]]", message));
-    }
-    
+  
+  public void broadcastDiscord(String message) throws IOException, SQLException {
     String url = db.getConfig("discord_webhook");
     if(null != url) {
       RequestBody body = RequestBody.create(
@@ -276,6 +269,28 @@ public class DailyStreaks extends JavaPlugin {
         res.close();
       }
     }
+  }
+  
+  public void broadcastIngame(String message) throws SQLException {
+    String bcCmd = db.getConfig("bc_command");
+    if(null != bcCmd) {
+      Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+        @Override public void run() {
+          Bukkit.getServer().dispatchCommand(
+              Bukkit.getConsoleSender(),
+              bcCmd.replace("[[MSG]]", message));
+        }
+      });
+      
+      Bukkit.getServer().dispatchCommand(
+          Bukkit.getConsoleSender(),
+          bcCmd.replace("[[MSG]]", message));
+    }
+  }
+
+  public void broadcast(String message) throws IOException, SQLException {
+    broadcastIngame(message);
+    broadcastDiscord(message);
   }
   
 }

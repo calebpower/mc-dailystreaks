@@ -17,7 +17,7 @@ public class HelpSubcommand extends Subcommand {
   /**
    * Instantiates this subcommand.
    * 
-   * @param plugin the {@link PaperLotto} instance
+   * @param plugin the {@link DailyStreaks} instance
    */
   public HelpSubcommand(DailyStreaks plugin) {
     super(
