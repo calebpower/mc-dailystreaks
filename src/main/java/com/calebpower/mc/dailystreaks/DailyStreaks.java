@@ -281,10 +281,6 @@ public class DailyStreaks extends JavaPlugin {
               bcCmd.replace("[[MSG]]", message));
         }
       });
-      
-      Bukkit.getServer().dispatchCommand(
-          Bukkit.getConsoleSender(),
-          bcCmd.replace("[[MSG]]", message));
     }
   }
 
